@@ -5,7 +5,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_form_alter().
  */
-function transaction_ext_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id == 'transaction_operation_edit_form' || $form_id == 'transaction_operation_add_form') {
     ksm($form);
     /*

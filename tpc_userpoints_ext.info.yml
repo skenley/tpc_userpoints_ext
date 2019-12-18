@@ -1,0 +1,9 @@
+name: 'TPC Userpoints Extension'
+type: module
+description: 'Extends the Userpoints and Transaction module to provide custom functionality for TPC Resident Rewards.'
+package: Workflow
+dependencies:
+  - transaction:transaction (>=8.x-1.0-alpha4)
+  
+version: '8.x-1.0-dev'
+core: '8.x'
