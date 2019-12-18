@@ -1,13 +1,25 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 
 /**
  * Implements hook_form_alter().
  */
 function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id == 'transaction_operation_edit_form' || $form_id == 'transaction_operation_add_form') {
-    ksm($form);
+    //ksm($form);
+    /*
+    $newConf = TOConfig::create([
+      'id' => 'ThisIsATest',
+      'toid' => 'userpoints_default_admin',
+      'defaultPointValue' => 30,
+    ]);
+    $newConf->save();
+    */
+    $newConf = TOConfig::load('ThisIsATest');
+    ksm('Did this work!?!');
+    ksm($newConf);
     /*
     $form['points_value'] = array(
       '#type' => 'number',

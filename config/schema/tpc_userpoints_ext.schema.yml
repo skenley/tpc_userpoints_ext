@@ -1,0 +1,14 @@
+tpc_userpoints_ext.transaction_operation_config.*:
+  type: config_entity
+  label: 'Transaction Operation Config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    toid:
+      type: string
+      label: 'TOID'
+    defaultPointValue:
+      type: integer
+      label: 'Default Point Value'
+      
