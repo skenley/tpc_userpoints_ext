@@ -18,7 +18,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   },
  *   config_export = {
  *     "id",
- *     "toid",
  *     "defaultPointValue"
  *   }
  * )
@@ -26,18 +25,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 class TOConfig extends ConfigEntityBase implements TOConfigInterface {
   
   protected $id;
-  protected $toid;
   protected $defaultPointValue;
   
   public function getID() {
     
     return $this->id;
-    
-  }
-  
-  public function getTOID() {
-    
-    return $this->toid;
     
   }
   

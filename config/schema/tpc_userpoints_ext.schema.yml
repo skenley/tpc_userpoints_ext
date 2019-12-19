@@ -5,9 +5,6 @@ tpc_userpoints_ext.transaction_operation_config.*:
     id:
       type: string
       label: 'ID'
-    toid:
-      type: string
-      label: 'TOID'
     defaultPointValue:
       type: integer
       label: 'Default Point Value'

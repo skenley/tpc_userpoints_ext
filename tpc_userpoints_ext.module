@@ -7,25 +7,44 @@ use Drupal\tpc_userpoints_ext\Entity\TOConfig;
  * Implements hook_form_alter().
  */
 function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  
   if ($form_id == 'transaction_operation_edit_form' || $form_id == 'transaction_operation_add_form') {
-    //ksm($form);
-    /*
-    $newConf = TOConfig::create([
-      'id' => 'ThisIsATest',
-      'toid' => 'userpoints_default_admin',
-      'defaultPointValue' => 30,
-    ]);
-    $newConf->save();
-    */
-    $newConf = TOConfig::load('ThisIsATest');
-    ksm('Did this work!?!');
-    ksm($newConf);
-    /*
+    
+    // Attempt to load the custom configuration associated with the transaction
+    // operation ID. The ID of the TOConfig object is the same as the machine
+    // name of the associated transaction ID.
+    $confID = $form['id']['#default_value'];
+    $conf = TOConfig::load($confID);
+    $defaultPoints = 0;
+    
+    if(!empty($conf)) {
+      
+      $defaultPoints = $conf->getDefaultPointValue();
+      
+    }
+    
     $form['points_value'] = array(
       '#type' => 'number',
       '#title' => t('Points Value'),
       '#weight' => 1,
+      '#default_value' => $defaultPoints,
     );
-    */
+    
+    //$form['actions']['submit']['#submit'][] = 'transactionOpCustSub';
   }
+  
+}
+
+/********************
+ * Custom Functions *
+ ********************/
+ 
+/**
+ * Transaction Operation Form Custom Submission Handler
+ */
+function transactionOpCustSub($form, $formState) {
+  
+  ksm($form);
+  //ksm($formState);
+  
 }

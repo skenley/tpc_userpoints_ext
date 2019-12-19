@@ -7,14 +7,9 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 interface TOConfigInterface extends ConfigEntityInterface {
   
   /**
-   * Returns the ID for this entity.
+   * Returns the ID for this entity (the same as the transaction op ID).
    */
   public function getID();
-  
-  /**
-   * Returns the Transaction Operation ID this config is for.
-   */
-  public function getTOID();
   
   /**
    * Gets the default points value for the Transaction Operation.
