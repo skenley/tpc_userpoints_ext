@@ -31,6 +31,12 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
     );
     
     $form['actions']['submit']['#submit'][] = 'transactionOpCustSub';
+    
+  }
+  else if ($form_id == "transaction_operation_delete_form") {
+    
+    $form['actions']['submit']['#submit'][] = 'transactionOpCustDeleteSub';
+    
   }
   
 }
@@ -64,6 +70,24 @@ function transactionOpCustSub($form, $formState) {
       'defaultPointValue' => intval($submittedVals['points_value']),
     ]);
     $conf->save();
+    
+  }
+  
+}
+
+/**
+ * Custom submit handler for the transaction operation delete form.
+ */
+function transactionOpCustDeleteSub($form, $formState) {
+  
+  $deleteOpID = $formState->getFormObject()->getEntity()->id();
+  $confToDelete = TOConfig::load($deleteOpID);
+  
+  // If there is a config object associated with the TO object about to be
+  // deleted, then delete the config too.
+  if(!empty($confToDelete)) {
+    
+    $confToDelete->delete();
     
   }
   
