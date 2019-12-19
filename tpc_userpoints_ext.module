@@ -30,7 +30,7 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
       '#default_value' => $defaultPoints,
     );
     
-    //$form['actions']['submit']['#submit'][] = 'transactionOpCustSub';
+    $form['actions']['submit']['#submit'][] = 'transactionOpCustSub';
   }
   
 }
@@ -44,7 +44,27 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
  */
 function transactionOpCustSub($form, $formState) {
   
-  ksm($form);
-  //ksm($formState);
+  // Attempt to load a transaction operation config
+  $submittedVals = $formState->getValues();
+  $confID = $submittedVals['id'];
+  $conf = TOConfig::load($confID);
+  
+  // If there already exists a config object, update it. Otherwise,
+  // create a new one.
+  if(!empty($conf)) {
+    
+    $conf->setDefaultPointValue($submittedVals['points_value']);
+    $conf->save();
+    
+  }
+  else {
+    
+    $conf = TOConfig::create([
+      'id' => $confID,
+      'defaultPointValue' => intval($submittedVals['points_value']),
+    ]);
+    $conf->save();
+    
+  }
   
 }
