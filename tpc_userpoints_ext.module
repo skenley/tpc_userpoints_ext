@@ -2,6 +2,8 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\tpc_userpoints_ext\Entity\TOConfig;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\InvokeCommand;
 
 /**
  * Implements hook_form_alter().
@@ -36,6 +38,27 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
   else if ($form_id == "transaction_operation_delete_form") {
     
     $form['actions']['submit']['#submit'][] = 'transactionOpCustDeleteSub';
+    
+  }
+  else if ($form_id == "transaction_userpoints_default_points_add_form" || 
+    $form_id == "transaction_userpoints_default_points_edit_form") {
+    
+    // Make the amount field read-only so that only the system can 
+    // alter its value
+    $form['field_userpoints_default_amount']['widget'][0]['value']
+      ['#attributes']['readonly'] = 'readonly';
+    
+    // AJAX setup for when the operation is selected
+    $form['operation']['widget']['#ajax'] = [
+      'callback' => 'updateAmountOnOpChange',
+      'disable-refocus' => TRUE,
+      'event' => 'change',
+      'wrapper' => 'operation',
+      'progress' => [
+        'type' => 'throbber',
+        'message' => 'Loading...',
+      ],
+    ];
     
   }
   
@@ -90,5 +113,34 @@ function transactionOpCustDeleteSub($form, $formState) {
     $confToDelete->delete();
     
   }
+  
+}
+
+function updateAmountOnOpChange(&$form, $formState) {
+  
+  
+  $operationID = $formState->getValue('operation')[0]['target_id'];
+  $conf = TOConfig::load($operationID);
+  $response = new AjaxResponse();
+  $selector = '#edit-field-userpoints-default-amount-0-value';
+  $method = 'val';
+  $arguments = '';
+  
+  // If there is a TOConfig associated with this transaction op, then
+  // set the amount field equal to the point value. Otherwise, set it
+  // to 0.
+  if(!empty($conf)) {
+  
+    $arguments = [$conf->getDefaultPointValue()];
+    
+  }
+  else {
+    
+    $arguments = [0];
+    
+  }
+  
+  $response->addCommand(new InvokeCommand($selector, $method, $arguments));
+  return $response;
   
 }
