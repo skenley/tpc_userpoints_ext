@@ -4,6 +4,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\transaction\Entity\TransactionOperation;
 
 /**
  * Implements hook_form_alter().
@@ -40,6 +41,7 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
     $form['actions']['submit']['#submit'][] = 'transactionOpCustDeleteSub';
     
   }
+  // The form for adding a transaction on the user page
   else if ($form_id == "transaction_userpoints_default_points_add_form" || 
     $form_id == "transaction_userpoints_default_points_edit_form") {
     
@@ -59,6 +61,35 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
         'message' => 'Loading...',
       ],
     ];
+    
+  }
+  else if($form_id == 'views_form_points_management_page_points_management') {
+    
+    // Store the no option default to add with the rest of the options.
+    $noOption = $form['header']['views_bulk_operations_bulk_form_1']
+      ['action']['#options'][''];
+    $toConfs = TOConfig::loadMultiple();
+    $actionOptions = ['' => $noOption];
+    
+    // Loop over each custom config for Transaction Operations, and add an
+    // action to the list of actions that can be taken for each one.
+    foreach($toConfs as $conf) {
+      
+      $transOp = TransactionOperation::load($conf->id());
+      $actionOptions[$conf->id()] = $transOp->label();
+      
+    }
+    
+    // Overwrite the actions select element options, and form validation
+    // and submission
+    $submitHandler = $form['#submit'][0];
+    $form['header']['views_bulk_operations_bulk_form_1']
+      ['action']['#options'] = $actionOptions;
+    $form['actions']['submit']['#submit'] = ['pointsManagementSubmission', 
+      $submitHandler];
+    $form['#validate'] = ['pointsManagementValidation'];
+    $form['#submit'] = ['pointsManagementSubmission', 
+      $submitHandler];
     
   }
   
@@ -116,6 +147,11 @@ function transactionOpCustDeleteSub($form, $formState) {
   
 }
 
+/**
+ * AJAX callback function for the transaction operation add form. It
+ * is responsible for populating the readonly amount field with a point 
+ * value from the selected transaction operation.
+ */
 function updateAmountOnOpChange(&$form, $formState) {
   
   
@@ -142,5 +178,72 @@ function updateAmountOnOpChange(&$form, $formState) {
   
   $response->addCommand(new InvokeCommand($selector, $method, $arguments));
   return $response;
+  
+}
+
+/**
+ * Function to be called before points management Views Bulk Operation 
+ * form submission. This sets a session variable to denote what transaction
+ * operation the UserPointsTransactionAction instance to execute for.
+ */
+function pointsManagementSubmission(&$form, &$formState) {
+  
+  // Session variable setup
+  $transOpID = $formState->getValues()['action'];
+  $_SESSION['toid'] = $transOpID;
+  
+  // Reset the value of action to the hard coded value so the VBO Form 
+  // submitter knows what VBO Action Plugin to use.
+  $formState->setValue('action', 'tpc_userpoints_ext_transaction_action');
+  
+}
+
+/**
+ * Validation method for the points management views bulk operation form.
+ * It checks to make sure that there is at least one user selected, and 
+ * that there is an transaction operation selected.
+ */
+function pointsManagementValidation(&$form, $formState) {
+  
+  $usersSelected = $formState->getValues()['views_bulk_operations_bulk_form_1'];
+  $action = $formState->getValues()['action'];
+  $atLeastOneUser = FALSE;
+  
+  // If a user is selected, it has a string value in this array. Otherwise,
+  // it will have an integer value of 0. Therefore, if there is at least 
+  // one user whose type is string, at least one user has been selected.
+  foreach($usersSelected as $user) {
+    
+    if(gettype($user) == 'string') {
+      
+      $atLeastOneUser = TRUE;
+      break;
+      
+    }
+    
+  }
+  
+  // If at least one user is selected and an action has been selected,
+  // just break out of the function to allow submission.
+  if($atLeastOneUser && !empty($action)) {
+    
+    return TRUE;
+    
+  }
+  // If there wasn't at least one user selected, mark the error as being
+  // caused by not having selected a user.
+  else if(!$atLeastOneUser) {
+    
+    $formState->setErrorByName('views_bulk_operations_bulk_form_1', 
+  'One user must at least be selected.');
+    
+  }
+  // If we've reached here, the error is because no action was selected.
+  else {
+    
+    $formState->setErrorByName('action', 
+  'A user transaction operation must be selected.');
+    
+  }
   
 }
