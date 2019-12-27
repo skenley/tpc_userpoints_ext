@@ -1,0 +1,16 @@
+tpc_userpoints_ext.onsite_gateway_post:
+  path: 'tpc_userpoints_ext/onsite_gateway_post'
+  defaults:
+    _controller: '\Drupal\tpc_userpoints_ext\Controller\OnsiteGatewayRedirectController::post'
+  options:
+    no_cache: TRUE
+  requirements:
+    _access: 'TRUE'
+tpc_userpoints_ext.onsite_gateway_302:
+  path: 'tpc_userpoints_ext/onsite_gateway_302'
+  defaults:
+    _controller: '\Drupal\tpc_userpoints_ext\Controller\OnsiteGatewayRedirectController::on302'
+  options:
+    no_cache: TRUE
+  requirements:
+    _access: 'TRUE'
