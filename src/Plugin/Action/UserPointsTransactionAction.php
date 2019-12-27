@@ -2,6 +2,7 @@
 
 namespace Drupal\tpc_userpoints_ext\Plugin\Action;
 
+use Drupal\tpc_userpoints_ext\UserPointsTransactionWrapper;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\transaction\Entity\Transaction;
@@ -35,19 +36,9 @@ class UserPointsTransactionAction extends ViewsBulkOperationsActionBase {
     // Load the config associated with this transaction operation to 
     // get the point value associated with the transaction ID.
     $conf = TOConfig::load($this->transactionOpID);
-    $newTran = Transaction::create([
-      'type' => 'userpoints_default_points', 
-      'operation' => $this->transactionOpID,
-      'target_entity' => $entity,
-      'field_userpoints_default_amount' => 
-        strval($conf->getDefaultPointValue()),
-    ]);
-
+    $newTran = new UserPointsTransactionWrapper('userpoints_default_points', 
+      $this->transactionOpID, $entity, strval($conf->getDefaultPointValue()));
     $newTran->execute();
-    // Saving each one during a bulk execution may bog down execution,
-    // it should be considered to call the executeMultiple method in here,
-    // and then in the executeMultiple save all the transactions afterward.
-    $newTran->save();
     
   }
   
