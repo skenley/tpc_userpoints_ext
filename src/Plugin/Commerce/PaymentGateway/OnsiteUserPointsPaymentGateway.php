@@ -12,7 +12,9 @@ use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OnsitePaymentGatewayB
 use Drupal\commerce_price\Price;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\user\Entity\User;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\tpc_userpoints_ext\UserPointsTransactionWrapper;
 
 /**
  * The onsite payment gateway for user points commerce payments.
@@ -49,7 +51,6 @@ class OnsiteUserPointsPaymentGateway extends OnsitePaymentGatewayBase {
    */
   public function createPayment(PaymentInterface $payment, $capture = TRUE) {
     
-    ksm('I think this going to do something....');
     $this->assertPaymentState($payment, ['new']);
     $payment_method = $payment->getPaymentMethod();
     $this->assertPaymentMethod($payment_method);
@@ -58,7 +59,15 @@ class OnsiteUserPointsPaymentGateway extends OnsitePaymentGatewayBase {
     // See \Drupal\commerce_payment\Exception for the available exceptions.
     // Remember to take into account $capture when performing the request.
     $amount = $payment->getAmount();
+    $amountStr = '-' . $payment->getAmount();
     $payment_method_token = $payment_method->getRemoteId();
+    $transaction = new UserPointsTransactionWrapper(
+      'userpoints_default_points',
+      'userpoints_commerce_transaction',
+       User::load(\Drupal::currentUser()->id()),
+       $amountStr);
+    $transaction->execute();
+    
     // The remote ID returned by the request.
     $remote_id = '123456';
     $next_state = 'completed';
@@ -66,7 +75,6 @@ class OnsiteUserPointsPaymentGateway extends OnsitePaymentGatewayBase {
     $payment->setState($next_state);
     $payment->setRemoteId($remote_id);
     $payment->save();
-    ksm('This did something...');
   }
   
   /**
