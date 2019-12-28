@@ -116,6 +116,11 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
       $submitHandler];
     
   }
+  else if($form_id == 'commerce_checkout_flow_multistep_default') {
+    
+    $form['#attached']['library'][] = 'tpc_userpoints_ext/payment-info-hide';
+    
+  }
   
 }
 

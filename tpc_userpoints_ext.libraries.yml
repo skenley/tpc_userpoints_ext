@@ -1,0 +1,6 @@
+payment-info-hide:
+  version: 1.x
+  css:
+    state:
+      css/payment-info-hide.css: {}
+  
