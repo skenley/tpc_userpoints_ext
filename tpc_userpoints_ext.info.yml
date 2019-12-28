@@ -3,6 +3,8 @@ type: module
 description: 'Extends the Userpoints and Transaction module to provide custom functionality for TPC Resident Rewards.'
 package: Workflow
 dependencies:
+  - drupal:commerce_payment
+  - drupal:views_bulk_operations
   - transaction:transaction (>=8.x-1.0-alpha4)
   
 version: '8.x-1.0-dev'
