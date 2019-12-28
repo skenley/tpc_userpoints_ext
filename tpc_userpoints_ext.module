@@ -7,6 +7,30 @@ use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\transaction\Entity\TransactionOperation;
 
 /**
+ * Implements hook_theme().
+ */
+function tpc_userpoints_ext_theme() {
+  
+  return [
+    'commerce_price_tpc' => [
+      'variables' => [
+        'number' => 0,
+        'currency' => NULL,
+      ],
+      'template' => 'commerce-price-tpc',
+    ],
+    'commerce_order_total_summary_tpc' => [
+      'variables' => [
+        'order_entity' => NULL,
+        'totals' => NULL,
+      ],
+      'template' => 'commerce-order-total-summary-tpc',
+    ],
+  ];
+  
+}
+ 
+/**
  * Implements hook_form_alter().
  */
 function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $form_id) {
