@@ -4,6 +4,9 @@ description: 'Extends the Userpoints and Transaction module to provide custom fu
 package: Workflow
 dependencies:
   - drupal:commerce_payment
+  - drupal:questionnaire
+  - drupal:userpoints
+  - drupal:userpoints_default
   - drupal:views_bulk_operations
   - transaction:transaction (>=8.x-1.0-alpha4)
   
