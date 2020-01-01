@@ -1,0 +1,5 @@
+services:
+  questionnaire_event_subscriber:
+    class: '\Drupal\tpc_userpoints_ext\EventSubscriber\QuestionnaireEventSubscriber'
+    tags:
+      - { name: 'event_subscriber' }

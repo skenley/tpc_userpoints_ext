@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - transaction.type.userpoints_default_points
+id: userpoints_q_quiz_passed
+label: 'Userpoints Passed Quiz'
+transaction_type: userpoints_default_points
+description: 'Userpoints Passed Quiz'
+details: {  }
