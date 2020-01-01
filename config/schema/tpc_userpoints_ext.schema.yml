@@ -8,4 +8,14 @@ tpc_userpoints_ext.transaction_operation_config.*:
     defaultPointValue:
       type: integer
       label: 'Default Point Value'
+tpc_userpoints_ext.quiz_config.*:
+  type: config_entity
+  label: 'Questionnaire Quiz Config'
+  mapping:
+    id:
+      type: string
+      label: 'Quiz Node ID and Unique ID for Config'
+    pointValue:
+      type: integer
+      label: 'Quiz User Points Value'
       
