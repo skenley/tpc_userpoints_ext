@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - tpc_userpoints_ext
+id: tpc_monthly_report.field_tpc_report_title
+field_name: field_tpc_report_title
+entity_type: tpc_monthly_report
+type: string
+settings:
+  max_length: 50
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

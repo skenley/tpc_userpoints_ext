@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.tpc_monthly_report.field_tpc_report_admin
+id: tpc_monthly_report.tpc_monthly_report.field_tpc_report_admin
+field_name: field_tpc_report_admin
+entity_type: tpc_monthly_report
+bundle: tpc_monthly_report
+label: 'Approving Admin'
+description: 'Admin who approved the report.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: true
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

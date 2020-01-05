@@ -5,7 +5,9 @@ use Drupal\tpc_userpoints_ext\Entity\QuizConfig;
 use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\transaction\Entity\TransactionOperation;
+use Drupal\transaction\Entity\Transaction;
 
 /**
  * Implements hook_theme().
@@ -152,6 +154,33 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
     $form['actions']['submit']['#submit'][] = 'quizDeleteSub';
     
   }
+  
+}
+
+/**
+ * Implements hook_rebuild to run code after cache clear
+ */
+function tpc_userpoints_ext_rebuild() {
+  
+  // Rebuild the MonthlyReportEntry actions list
+  $fieldStorage = FieldStorageConfig::loadByName('tpc_monthly_report_entry', 
+    'field_tpc_re_actions');
+  $actionOptions = [];
+  $toConfs = $toConfs = TOConfig::loadMultiple();
+    
+  // Loop over each custom config for Transaction Operations, and add an
+  // action to the list of actions that can be taken for each one.
+  // TODO: Copied from hook_form_alter for the views bulk operation page.
+  // Probably should be encapsulated into a function
+  foreach($toConfs as $conf) {
+    
+    $transOp = TransactionOperation::load($conf->id());
+    $actionOptions[$conf->id()] = $transOp->label();
+    
+  }
+  
+  $fieldStorage->setSetting('allowed_values', $actionOptions);
+  $fieldStorage->save();
   
 }
 

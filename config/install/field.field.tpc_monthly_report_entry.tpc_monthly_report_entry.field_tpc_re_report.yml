@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.tpc_monthly_report_entry.field_tpc_re_report
+id: tpc_monthly_report_entry.tpc_monthly_report_entry.field_tpc_re_report
+field_name: field_tpc_re_report
+entity_type: tpc_monthly_report_entry
+bundle: tpc_monthly_report_entry
+label: 'Report'
+description: 'Monthly report this entry is for.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:tpc_monthly_report'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

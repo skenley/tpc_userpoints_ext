@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.tpc_monthly_report_entry.field_tpc_re_actions
+id: tpc_monthly_report_entry.tpc_monthly_report_entry.field_tpc_re_actions
+field_name: field_tpc_re_actions
+entity_type: tpc_monthly_report_entry
+bundle: tpc_monthly_report_entry
+label: 'Actions'
+description: 'List of actions to apply to the tenant upon report approval.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

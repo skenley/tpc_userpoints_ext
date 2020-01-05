@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.tpc_monthly_report.field_tpc_report_approved
+id: tpc_monthly_report.tpc_monthly_report.field_tpc_report_approved
+field_name: field_tpc_report_approved
+entity_type: tpc_monthly_report
+bundle: tpc_monthly_report
+label: Approved
+description: 'Value is checked if approved by an admin.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'True'
+  off_label: 'False'
+field_type: boolean

@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.transaction.field_tpcext_userpoints_quiz_ref
+    - node.type.q_quiz
+    - transaction.type.userpoints_default_points
+id: transaction.userpoints_default_points.field_tpcext_userpoints_quiz_ref
+field_name: field_tpcext_userpoints_quiz_ref
+entity_type: transaction
+bundle: userpoints_default_points
+label: 'Quiz Reference'
+description: 'The quiz this operation was associated with, if necessary.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      q_quiz: q_quiz
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

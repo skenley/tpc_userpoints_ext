@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.tpc_monthly_report.field_tpc_report_feedback
+  module:
+    - text
+id: tpc_monthly_report.tpc_monthly_report.field_tpc_report_feedback
+field_name: field_tpc_report_feedback
+entity_type: tpc_monthly_report
+bundle: tpc_monthly_report
+label: 'Feedback'
+description: 'Feedback from the admin reviewing the report.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

@@ -30,7 +30,8 @@ class QuestionnaireEventSubscriber implements EventSubscriberInterface {
     if(!empty($conf)) {
       
       $newTran = new UserPointsTransactionWrapper('userpoints_default_points', 
-        'userpoints_q_quiz_passed', $user, strval($conf->getPointValue()));
+        'userpoints_q_quiz_passed', $user, strval($conf->getPointValue()), 
+        $quiz->id());
       $newTran->execute();
       
     }

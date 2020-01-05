@@ -24,15 +24,34 @@ class UserPointsTransactionWrapper {
    *   The target entity for the transaction
    * @param string value
    *   The user points amount for this transaction.
+   * @param string qid
+   *   The quiz node id.
    */
-  public function __construct($type, $operation, User $user, $value) {
+  public function __construct($type, $operation, User $user, $value, $qid = '') {
     
-    $tran = Transaction::create([
-      'type' => $type, 
-      'operation' => $operation,
-      'target_entity' => $user,
-      'field_userpoints_default_amount' => $value,
-    ]);
+    $tran = '';
+    
+    if(!empty($qid)) {
+      
+      $tran = Transaction::create([
+        'type' => $type, 
+        'operation' => $operation,
+        'target_entity' => $user,
+        'field_userpoints_default_amount' => $value,
+        'field_tpcext_userpoints_quiz_ref' => $qid,
+      ]);
+      
+    }
+    else {
+      
+      $tran = Transaction::create([
+        'type' => $type, 
+        'operation' => $operation,
+        'target_entity' => $user,
+        'field_userpoints_default_amount' => $value,
+      ]);
+      
+    }
     
     $tran->save(); 
     $this->transaction = $tran;

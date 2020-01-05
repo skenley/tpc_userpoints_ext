@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.tpc_monthly_report.field_tpc_report_title
+id: tpc_monthly_report.tpc_monthly_report.field_tpc_report_title
+field_name: field_tpc_report_title
+entity_type: tpc_monthly_report
+bundle: tpc_monthly_report
+label: 'Title'
+description: 'The title of the monthly report (should have a month, community name and a year).'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
