@@ -14,3 +14,10 @@ tpc_userpoints_ext.onsite_gateway_302:
     no_cache: TRUE
   requirements:
     _access: 'TRUE'
+tpc_userpoints_ext.tpc_monthly_report_add:
+  path: '/tpc_monthly_report/new'
+  defaults:
+    _entity_form: tpc_monthly_report.add
+    _title: 'New Monthly Report'
+  requirements:
+    _entity_create_access: 'tpc_monthly_report'
