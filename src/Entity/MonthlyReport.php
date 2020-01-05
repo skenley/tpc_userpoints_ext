@@ -19,7 +19,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *     "views_data" = "Drupal\views\EntityViewsData",
  *     "form" = {
  *       "default" = "Drupal\Core\Entity\ContentEntityForm",
- *       "add" = "Drupal\Core\Entity\ContentEntityForm",
+ *       "add" = "Drupal\tpc_userpoints_ext\Form\AddTPCMonthlyReportForm",
  *       "edit" = "Drupal\Core\Entity\ContentEntityForm",
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
  *     },
