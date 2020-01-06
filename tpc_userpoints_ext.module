@@ -29,6 +29,13 @@ function tpc_userpoints_ext_theme() {
       ],
       'template' => 'commerce-order-total-summary-tpc',
     ],
+    'tpc_monthly_report_tenants' => [
+      'variables' => [
+        'tenants' => NULL,
+        'actions' => NULL,
+      ],
+      'template' => 'tpc-monthly-report-tenants',
+    ],
   ];
   
 }

@@ -17,7 +17,7 @@ tpc_userpoints_ext.onsite_gateway_302:
 tpc_userpoints_ext.tpc_monthly_report_add:
   path: '/tpc_monthly_report/new'
   defaults:
-    _entity_form: tpc_monthly_report.add
+    _form: '\Drupal\tpc_userpoints_ext\Form\AddTPCMonthlyReportForm'
     _title: 'New Monthly Report'
   requirements:
-    _entity_create_access: 'tpc_monthly_report'
+    _permission: 'administer site configuration'

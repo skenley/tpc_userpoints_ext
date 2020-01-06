@@ -1,0 +1,30 @@
+<div class="global-actions">
+  <label>Apply to all</label>
+  {% for action in actions %}
+    <div class="global-action">
+      <label for="{{ action.id }}">{{ action.label }}</label>
+      <input name="{{ action.id }}" type="checkbox" />
+    </div>
+  {% endfor %}
+</div>
+<div class="tenants">
+  <label>Tenants</label>
+  {% for tenant in tenants %}
+    <div class="tenant-wrapper">
+      <div class="info">
+        <p class="name">Name: {{ tenant.first_name }} {{ tenant.last_name }}</p>
+        <p class="email">Email: {{ tenant.email }}<p>
+        <p class="id">ID: {{ tenant.unique_id }}</p>
+        <p class="unit-number">Unit Number: {{ tenant.unit_num }}</p>
+      </div>
+      <div class="local-actions">
+        {% for action in actions %}
+          <div class="local-action">
+            <label for="{{ action.id }}">{{ action.label }}</label>
+            <input name="{{ action.id }}" type="checkbox" />
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>

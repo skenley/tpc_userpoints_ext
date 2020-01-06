@@ -3,4 +3,10 @@ payment-info-hide:
   css:
     state:
       css/payment-info-hide.css: {}
+tpc-monthly-report-actions:
+  version: 1.x
+  js:
+    js/tpc-monthly-report-actions.js: {}
+  dependencies:
+    - core/jquery
   
