@@ -39,11 +39,9 @@ class AddTPCMonthlyReportForm extends FormBase {
     
     $form['#attached']['library'][] = 'tpc_userpoints_ext/tpc-monthly-report-actions';
     
-    $form['title'] = array(
-      '#title' => 'Report Title',
-      '#type' => 'textfield',
-      '#maxlength' => 50,
-      '#required' => TRUE,
+    $form['report_date'] = array(
+      '#type' => 'date',
+      '#title' => 'Date of Report',
     );
     
     $form['property'] = array(
