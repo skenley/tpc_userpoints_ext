@@ -21,3 +21,10 @@ tpc_userpoints_ext.tpc_monthly_report_add:
     _title: 'New Monthly Report'
   requirements:
     _permission: 'administer site configuration'
+tpc_userpoints_ext.tpc_monthly_report_add_confirm:
+  path: '/tpc_monthly_report/submitted'
+  defaults:
+    _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCMonthlyReportController::confirmPage'
+    _title: 'Successful Submission'
+  requirements:
+    _permission: 'administer site configuration'

@@ -37,8 +37,6 @@ class AddTPCMonthlyReportForm extends FormBase {
   public function buildForm(array $form, 
     FormStateInterface $formState = NULL) {
     
-    //ksm($this->entity);
-    //$form['title'] = $this->entity->get('field_tpc_report_title')->view('form');
     $form['#attached']['library'][] = 'tpc_userpoints_ext/tpc-monthly-report-actions';
     
     $form['title'] = array(
@@ -82,6 +80,7 @@ class AddTPCMonthlyReportForm extends FormBase {
     
     $form['actions'] = array(
       '#theme' => 'tpc_monthly_report_actions',
+      '#type' => 'submit',
     );
     
     return $form;
@@ -90,7 +89,10 @@ class AddTPCMonthlyReportForm extends FormBase {
   
   public function submitForm(array &$form, FormStateInterface $formState) {
     
-    // TO BE IMPLEMENTED
+    $url = \Drupal\Core\Url
+      ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_add_confirm');
+        
+    $formState->setRedirectUrl($url);
     
   }
   

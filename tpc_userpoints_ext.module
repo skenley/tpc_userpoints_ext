@@ -40,6 +40,10 @@ function tpc_userpoints_ext_theme() {
       'variables' => [],
       'template' => 'tpc-monthly-report-actions',
     ],
+    'tpc_monthly_report_confirm_page' => [
+      'variables' => [],
+      'template' => 'tpc-monthly-report-confirm-page',
+    ],
   ];
   
 }
