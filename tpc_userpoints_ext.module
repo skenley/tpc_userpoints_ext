@@ -36,6 +36,10 @@ function tpc_userpoints_ext_theme() {
       ],
       'template' => 'tpc-monthly-report-tenants',
     ],
+    'tpc_monthly_report_actions' => [
+      'variables' => [],
+      'template' => 'tpc-monthly-report-actions',
+    ],
   ];
   
 }

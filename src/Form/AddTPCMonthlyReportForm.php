@@ -4,6 +4,7 @@ namespace Drupal\tpc_userpoints_ext\Form;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -12,6 +13,17 @@ use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 use Drupal\transaction\Entity\TransactionOperation;
 
 class AddTPCMonthlyReportForm extends FormBase {
+  
+  private $noTenants;
+  
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct() {
+    
+    $this->noTenants = TRUE;
+    
+  }
   
   /**
    * {@inheritdoc}
@@ -69,17 +81,7 @@ class AddTPCMonthlyReportForm extends FormBase {
     );
     
     $form['actions'] = array(
-      '#type' => 'actions',
-    );
-    
-    $form['actions']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => 'Submit',
-    );
-    
-    $form['actions']['cancel'] = array(
-      '#type' => 'button',
-      '#value' => 'Cancel',
+      '#theme' => 'tpc_monthly_report_actions',
     );
     
     return $form;
@@ -131,7 +133,8 @@ class AddTPCMonthlyReportForm extends FormBase {
       
       // If the transaction operation is not apart of the list to be 
       // excluded, include it in the action list.
-      if($confID != 'userpoints_q_quiz_passed') {
+      if($confID != 'userpoints_q_quiz_passed' 
+        && $confID != 'userpoints_commerce_transaction') {
         
         $actions[] = [
           'id' => $conf->id(),
@@ -151,6 +154,31 @@ class AddTPCMonthlyReportForm extends FormBase {
     ];
     $output = \Drupal::service('renderer')->render($template);
     $response->addCommand(new HtmlCommand('#edit-tenants-container', $output));
+    
+    // If there were no tenants in the previous load and there are tenants
+    // loaded for this AJAX call, hide the continue button and show the
+    // action buttons.
+    if($this->noTenants && count($users) > 0) {
+    
+      $response->addCommand(new InvokeCommand('.actions .secondary-actions', 
+        'removeClass', ['hide']));
+      $response->addCommand(new InvokeCommand('.actions .initial-actions',
+        'addClass', ['hide']));
+      $this->noTenants = FALSE;
+      
+    }
+    // If there were tenants loaded in the last load but no tenants in this
+    // load, hide the actions and show the continue button
+    else if(!$noTenants && count($users) == 0) {
+      
+      $response->addCommand(new InvokeCommand('.actions .secondary-actions', 
+        'addClass', ['hide']));
+      $response->addCommand(new InvokeCommand('.actions .initial-actions',
+        'removeClass', ['hide']));
+      $this->noTenants = TRUE;
+      
+    }
+    
     return $response;
     
   }
