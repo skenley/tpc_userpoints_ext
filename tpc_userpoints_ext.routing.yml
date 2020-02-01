@@ -36,3 +36,10 @@ tpc_userpoints_ext.tpc_monthly_report_add_confirm:
     _title: 'Successful Submission'
   requirements:
     _permission: 'administer site configuration'
+tpc_userpoints_ext.tpc_monthly_report_review:
+  path: '/tpc_monthly_report/review'
+  defaults:
+    _form: '\Drupal\tpc_userpoints_ext\Form\ReviewTPCMonthlyReportForm'
+    _title: 'Review Report'
+  requirements:
+    _permission: 'tpc monthly report approve'
