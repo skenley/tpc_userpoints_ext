@@ -15,12 +15,20 @@ tpc_userpoints_ext.onsite_gateway_302:
   requirements:
     _access: 'TRUE'
 tpc_userpoints_ext.tpc_monthly_report_add:
-  path: '/tpc_monthly_report/new'
+  path: '/tpc_monthly_report/new/step_one'
   defaults:
     _form: '\Drupal\tpc_userpoints_ext\Form\AddTPCMonthlyReportForm'
     _title: 'New Monthly Report'
   requirements:
     _permission: 'administer site configuration'
+tpc_userpoints_ext.tpc_monthly_report_add_tenants:
+  path: '/tpc_monthly_report/new/step_two'
+  defaults:
+    _form: '\Drupal\tpc_userpoints_ext\Form\AddTPCMonthlyReportFormTenants'
+    _title: 'New Monthly Report'
+  requirements:
+    _permission: 'administer site configuration'
+
 tpc_userpoints_ext.tpc_monthly_report_add_confirm:
   path: '/tpc_monthly_report/submitted'
   defaults:

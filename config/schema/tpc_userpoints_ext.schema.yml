@@ -18,4 +18,26 @@ tpc_userpoints_ext.quiz_config.*:
     pointValue:
       type: integer
       label: 'Quiz User Points Value'
+tpc_userpoints_ext.monthly_report_form_config.*:
+  type: config_entity
+  label: 'Monthly Report Form Config'
+  mapping:
+    id:
+      type: string
+      label: 'ID of this config.'
+    monthlyReportID:
+      type: string
+      label: 'ID of the associated MonthlyReport Entity'
+    sessionID:
+      type: string
+      label: 'Associated session ID'
+    currentOffset:
+      type: string
+      label: 'The current page offset of the form'
+    pagerOffset:
+      type: string
+      label: 'The number to offset by'
+    lastUpdated:
+      type: string
+      label: 'The timestamp of the last update'
       

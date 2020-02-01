@@ -1,0 +1,10 @@
+
+{% if item == 'previous' %}
+  <li class="pager-previous">Previous</li>
+{% elseif item == 'next' %}
+  <li>Next</li>
+{% elseif item == 1 %}
+  <li><a class="active pager-count">{{ item }}</a></li>
+{% else %}
+  <li><a class="pager-count">{{ item }}</a></li>
+{% endif %}

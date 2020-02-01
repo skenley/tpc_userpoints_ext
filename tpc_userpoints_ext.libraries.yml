@@ -12,4 +12,3 @@ tpc-monthly-report-actions:
     js/tpc-monthly-report-actions.js: {}
   dependencies:
     - core/jquery
-  
