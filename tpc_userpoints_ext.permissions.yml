@@ -1,0 +1,6 @@
+tpc monthly report submit: 
+  title: 'TPC Monthly Report Submit'
+  description: 'Submit TPC Monthly Reports.'
+tpc monthly report approve:
+  title: 'TPC Monthly Report Approve'
+  description: 'Approve TPC Monthly Reports.'
