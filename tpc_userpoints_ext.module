@@ -6,6 +6,7 @@ use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\transaction\Entity\TransactionOperation;
 use Drupal\transaction\Entity\Transaction;
 
@@ -43,6 +44,12 @@ function tpc_userpoints_ext_theme() {
     'tpc_monthly_report_confirm_page' => [
       'variables' => [],
       'template' => 'tpc-monthly-report-confirm-page',
+    ],
+    'tpc_monthly_report_pager_item' => [
+      'variables' => [
+        'item' => NULL,
+      ],
+      'template' => 'tpc-monthly-report-pager-item',
     ],
   ];
   
@@ -391,5 +398,27 @@ function quizDeleteSub($form, $formState) {
     $confToDelete->delete();
     
   }
+  
+}
+
+function monthlyReportEntryAllowedValues(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  
+  $options = [];
+  $operationConfigs = TOConfig::loadMultiple();
+  
+  foreach($operationConfigs as $conf) {
+    
+    $confID = $conf->id();
+    
+    if($confID != 'userpoints_q_quiz_passed' 
+      && $confID != 'userpoints_commerce_transaction') {
+      
+      $options[$confID] = TransactionOperation::load($conf->id())->label();
+      
+    }
+    
+  }
+  
+  return $options;
   
 }

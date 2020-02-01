@@ -10,7 +10,7 @@ entity_type: tpc_monthly_report_entry
 type: list_string
 settings:
   allowed_values: {  }
-  allowed_values_function: ''
+  allowed_values_function: 'monthlyReportEntryAllowedValues'
 module: options
 locked: false
 cardinality: -1
