@@ -135,6 +135,13 @@ class ReviewTPCMonthlyReportForm extends FormBase {
           
         }
         
+        $form['date_submitted'] = array(
+          '#type' => 'label',
+          '#title' => 'Date submitted: ' . date('m/d/Y', $report
+            ->get('field_tpc_report_created')
+            ->getValue()[0]['value']),
+        );
+        
         $form['actions_container'] = array(
           '#type' => 'container',
           '#attributes' => array(
@@ -272,10 +279,32 @@ class ReviewTPCMonthlyReportForm extends FormBase {
         }
         else {
           
-          $form['tenants_container']['actions']['submit'] = array(
-            '#type' => 'submit',
-            '#value' => 'Submit For Approval',
-          );
+          $currentUser = User::load(\Drupal::currentUser()->id());
+          
+          if($currentUser->hasPermission('tpc monthly report approve')) {
+            
+            $form['tenants_container']['actions']['approve'] = array(
+              '#type' => 'submit',
+              '#value' => 'Approve',
+            );
+            $form['tenants_container']['actions']['deny'] = array(
+              '#type' => 'submit',
+              '#value' => 'Deny',
+            );
+            $form['tenants_container']['actions']['finish'] = array(
+              '#type' => 'submit',
+              '#value' => 'Finish',
+            );
+            
+          }
+          else if($currentUser->hasPermission('tpc monthly report submit')) {
+            
+            $form['tenants_container']['actions']['finish'] = array(
+              '#type' => 'submit',
+              '#value' => 'Finish',
+            );
+            
+          }
           
         }
         
