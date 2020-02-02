@@ -157,10 +157,13 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
     /*
     $reports = MonthlyReport::loadMultiple();
     $entries = MonthlyReportEntry::loadMultiple();
+    //ksm($reports);
+    //ksm($entries);
     
     foreach($entries as $entry) {
       
-      $entry->delete();
+      //$entry->delete();
+      //ksm($entry->get('field_tpc_re_report')->getValue());
       
     }
     
@@ -397,9 +400,63 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
         ]);
         $newMonthlyReport->save();
         
+        // Save user checkbox states
+        foreach($formState->getValues()['tenants_container'] as $tenantKey => $values) {
+          
+          $tenantID = explode('_', $tenantKey)[1];
+          
+          // If this isn't in place a config will be added for the actions.
+          if(!is_numeric($tenantID)) {
+            
+            continue;
+            
+          }
+          
+          $checkedActions = [];
+          $entryID = 0;
+          
+          foreach($values['local_actions'] as $action => $checked) {
+            
+            if($checked) {
+              
+              $checkedActions[] = $action;
+              
+            }
+            
+          }
+          
+          $reportEntries = \Drupal::entityQuery('tpc_monthly_report_entry')
+                            ->condition('field_tpc_re_report', 
+                              $reportsCount)
+                            ->condition('field_tpc_re_tenant', $tenantID)
+                            ->execute();
+          
+          if(empty($reportEntries)) {
+            
+            $reportEntry = MonthlyReportEntry::create([
+              'id' => $entryID,
+              'field_tpc_re_report' => 
+                $newMonthlyReport->id(),
+              'field_tpc_re_actions' => $checkedActions,
+              'field_tpc_re_tenant' => $tenantID,
+            ]);
+            
+          }
+          else {
+            
+            $key = array_keys($reportEntries)[0];
+            $reportEntry = MonthlyReportEntry::load($reportEntries[$key]);
+            $reportEntry->set('field_tpc_re_actions', $checkedActions);
+            
+          }
+          
+          $reportEntry->save();
+          
+        }
+        
         $pagerConfig = MonthlyReportFormConfig::create([
           'id' => $this->pagerConfigID,
-          'monthlyReportID' => $reportsCount,
+          'monthlyReportID' => $newMonthlyReport->id(),
           'currentOffset' => $this->currentOffset + $this->pagerOffset,
           'pagerOffset' => 5,
           'lastUpdated' => $createdTimestamp,
