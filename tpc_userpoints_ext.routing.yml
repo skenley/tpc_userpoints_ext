@@ -32,7 +32,14 @@ tpc_userpoints_ext.tpc_monthly_report_add_tenants:
 tpc_userpoints_ext.tpc_monthly_report_add_confirm:
   path: '/tpc_monthly_report/submitted'
   defaults:
-    _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCMonthlyReportController::confirmPage'
+    _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCMonthlyReportController::confirmPageNew'
+    _title: 'Successful Submission'
+  requirements:
+    _permission: 'administer site configuration'
+tpc_userpoints_ext.tpc_monthly_report_review_approve:
+  path: '/tpc_monthly_report/approved'
+  defaults:
+    _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCMonthlyReportController::confirmPageApproved'
     _title: 'Successful Submission'
   requirements:
     _permission: 'administer site configuration'

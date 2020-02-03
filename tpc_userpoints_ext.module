@@ -42,7 +42,9 @@ function tpc_userpoints_ext_theme() {
       'template' => 'tpc-monthly-report-actions',
     ],
     'tpc_monthly_report_confirm_page' => [
-      'variables' => [],
+      'variables' => [
+        'message' => NULL,
+      ],
       'template' => 'tpc-monthly-report-confirm-page',
     ],
     'tpc_monthly_report_pager_item' => [

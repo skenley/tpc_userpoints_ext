@@ -14,6 +14,7 @@ use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 use Drupal\tpc_userpoints_ext\Entity\MonthlyReport;
 use Drupal\tpc_userpoints_ext\Entity\MonthlyReportEntry;
 use Drupal\tpc_userpoints_ext\Entity\MonthlyReportFormConfig;
+use Drupal\tpc_userpoints_ext\UserPointsTransactionWrapper;
 use Drupal\transaction\Entity\TransactionOperation;
 use Drupal\Core\Database\Database;
 use Drupal\taxonomy\Entity\Term;
@@ -492,6 +493,88 @@ class ReviewTPCMonthlyReportForm extends FormBase {
         $reportEntry->save();
         
       }
+      
+    }
+    else if($buttonSubmitted == 'Approve') {
+      
+      $pagerConfig = MonthlyReportFormConfig::load($this->pagerConfigID);
+      
+      // Save any user operations that were checked on this page.
+      foreach($formState->getValues()['tenants_container'] as $tenantKey => $values) {
+        
+        $tenantID = explode('_', $tenantKey)[1];
+        
+        // If this isn't in place a config will be added for the actions.
+        if(!is_numeric($tenantID)) {
+          
+          continue;
+          
+        }
+        
+        $entryID = 0;
+        $checkedActions = [];
+        
+        foreach($values['local_actions'] as $action => $checked) {
+          
+          if($checked) {
+            
+            $checkedActions[] = $action;
+            
+          }
+          
+        }
+        
+        $reportEntries = \Drupal::entityQuery('tpc_monthly_report_entry')
+                          ->condition('field_tpc_re_report', 
+                            $report->id())
+                          ->condition('field_tpc_re_tenant', $tenantID)
+                          ->execute();
+        
+        $key = array_keys($reportEntries)[0];
+        $reportEntry = MonthlyReportEntry::load($reportEntries[$key]);
+        $reportEntry->set('field_tpc_re_actions', $checkedActions);
+        
+        $reportEntry->save();
+        
+      }
+      
+      $tmpEntries = \Drupal::entityQuery('tpc_monthly_report_entry')
+                                ->condition('field_tpc_re_report', 
+                                  $report->id())
+                                ->execute();
+      foreach($tmpEntries as $tmpEntryKey => $tmpEntryValue) {
+        
+        $tmpEntry = MonthlyReportEntry::load($tmpEntryKey);
+        $userID = $tmpEntry->get('field_tpc_re_tenant')
+          ->getValue()[0]['target_id'];
+        $checkedActions = array_values($tmpEntry->get('field_tpc_re_actions')
+          ->getValue()[0]);
+        $tenant = User::load($userID);
+        
+        // Execute the transactions for this user.
+        foreach($checkedActions as $checkedAction) {
+        
+          $toconf = TOConfig::load($checkedAction);
+          
+          $newTran = new UserPointsTransactionWrapper(
+            'userpoints_default_points', 
+            $checkedAction, 
+            $tenant, 
+            strval($toconf->getDefaultPointValue()));
+          $newTran->execute();
+          
+        }
+        
+      }
+      
+      // Clean up the config object to make sure it doesn't just
+      // occupy space in the database
+      $pagerConfig->delete();
+      
+      $url = \Drupal\Core\Url
+        ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_review_approve');
+        
+      $formState->setRedirectUrl($url);
       
     }
     else if($buttonSubmitted == 'Submit For Approval') {
