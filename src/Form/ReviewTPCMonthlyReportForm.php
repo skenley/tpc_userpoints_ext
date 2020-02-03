@@ -58,11 +58,25 @@ class ReviewTPCMonthlyReportForm extends FormBase {
     if(!empty($reportID)) {
       
       $report = MonthlyReport::load($reportID);
+      $approved = intval($report->get('field_tpc_report_approved')
+        ->getValue());
       
       if(empty($report)) {
         
         $form['error'] = $this->getRequirementMessage();
         return $form;
+        
+      }
+      else if($approved) {
+        
+        $form['error'] = array(
+          '#type' => 'label',
+          '#title' => 'This report has already been approved.',
+        );
+        
+        $form['cta'] = array(
+          '#markup' => '<a class="button" href="/">Return Home</a>',
+        );
         
       }
       else {
@@ -570,6 +584,9 @@ class ReviewTPCMonthlyReportForm extends FormBase {
       // Clean up the config object to make sure it doesn't just
       // occupy space in the database
       $pagerConfig->delete();
+      $report->set('field_tpc_report_approved', 1);
+      $report->set('field_tpc_report_changed', date());
+      $report->save();
       
       $url = \Drupal\Core\Url
         ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_review_approve');
