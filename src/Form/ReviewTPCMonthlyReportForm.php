@@ -59,7 +59,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
       
       $report = MonthlyReport::load($reportID);
       $approved = intval($report->get('field_tpc_report_approved')
-        ->getValue());
+        ->getValue()[0]['value']);
       
       if(empty($report)) {
         

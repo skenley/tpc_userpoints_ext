@@ -255,6 +255,7 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
           $key = array_keys($reportEntries)[0];
           $reportEntry = MonthlyReportEntry::load($reportEntries[$key]);
           $checkedOptions = $reportEntry->get('field_tpc_re_actions')->getValue();
+          ksm($reportEntry->get('field_tpc_re_report')->getValue());
           
           foreach($checkedOptions as $option) {
             
@@ -397,6 +398,7 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
           'field_tpc_report_property' => $this->property->id(),
           'field_tpc_report_created' => $createdTimestamp,
           'field_tpc_report_changed' => $createdTimestamp,
+          'field_tpc_report_approved' => 0,
         ]);
         $newMonthlyReport->save();
         
