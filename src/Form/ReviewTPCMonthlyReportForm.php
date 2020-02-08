@@ -302,10 +302,6 @@ class ReviewTPCMonthlyReportForm extends FormBase {
               '#type' => 'submit',
               '#value' => 'Approve',
             );
-            $form['tenants_container']['actions']['deny'] = array(
-              '#type' => 'submit',
-              '#value' => 'Deny',
-            );
             $form['tenants_container']['actions']['finish'] = array(
               '#type' => 'submit',
               '#value' => 'Finish',
