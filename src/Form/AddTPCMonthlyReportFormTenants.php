@@ -73,14 +73,7 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
   
   public function buildForm(array $form, 
     FormStateInterface $formState = NULL) {
-    $entries = MonthlyReportEntry::loadMultiple();
-    //ksm($entries);
-    /*
-    foreach($entries as $entry) {
-      ksm($entry->get('field_tpc_re_actions')->getValue());
-      //$entry->delete();
-    }
-    */
+
     $reportsCount = \Drupal::database()
               ->select('tpc_monthly_report', 'tpcmr')
               ->fields('tpcmr', ['id'],)
@@ -645,6 +638,34 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
         }
         
         $reportEntry->save();
+        
+      }
+      
+      // Send email to all admins notifying them that a new report is
+      // available to approve
+      $adminIDs = \Drupal::entityQuery('user')
+        ->condition('status', 1)
+        ->condition('roles', 'administrator')
+        ->execute();
+      $tmpUrl = \Drupal\Core\Url
+        ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_review')
+        ->setRouteParameter('report', $pagerConfig->getMonthlyReportID())
+        ->setAbsolute()
+        ->toString();
+        
+      foreach($adminIDs as $id) {
+        
+        $tmpAdmin = User::load($id);
+        
+        $mailManager = \Drupal::service('plugin.manager.mail');
+        $result = $mailManager->mail('tpc_userpoints_ext', 
+                    'new_monthly_report',
+                    $tmpAdmin->getEmail(), 
+                    \Drupal::currentUser()->getPreferredLangcode(),
+                    array('reportUrl' => $tmpUrl),
+                    NULL,
+                    TRUE
+                  );
         
       }
       

@@ -424,3 +424,24 @@ function monthlyReportEntryAllowedValues(FieldStorageConfig $definition, Content
   return $options;
   
 }
+
+/**
+ * Implements hook_mail
+ */
+function tpc_userpoints_ext_mail($key, &$message, $params) {
+  
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+  
+  if($key == 'new_monthly_report') {
+  
+    $body = "A new monthly report has been submitted. \n\n" . 
+      "You can review the report here: " . $params['reportUrl'];
+    $message['from'] = \Drupal::config('system.site')->get('mail');
+    $message['subject'] = 'New Monthly Report';
+    $message['body'][] = $body;
+    
+  }
+  
+}
