@@ -1,0 +1,9 @@
+<div class="quiz-list-block">
+  {% for quizItem in quizList %}
+    <div class="quiz-item-wrapper">
+      {{ quizItem.icon }}
+      <label>{{ quizItem.title }}</label>
+      <a class="button" href="{{ quizItem.link }}">Take the Quiz</a>
+    </div>
+  {% endfor %}
+</div>

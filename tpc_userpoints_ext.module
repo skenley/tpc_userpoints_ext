@@ -53,6 +53,12 @@ function tpc_userpoints_ext_theme() {
       ],
       'template' => 'tpc-monthly-report-pager-item',
     ],
+    'tpc_quiz_list' => [
+      'variables' => [
+        'quizList' => NULL,
+      ],
+      'template' => 'tpc-quiz-list-block',
+    ],
   ];
   
 }
