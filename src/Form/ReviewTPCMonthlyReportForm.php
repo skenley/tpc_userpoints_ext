@@ -302,17 +302,17 @@ class ReviewTPCMonthlyReportForm extends FormBase {
               '#type' => 'submit',
               '#value' => 'Approve',
             );
-            $form['tenants_container']['actions']['finish'] = array(
+            $form['tenants_container']['actions']['save'] = array(
               '#type' => 'submit',
-              '#value' => 'Finish',
+              '#value' => 'Save',
             );
             
           }
           else if($currentUser->hasPermission('tpc monthly report submit')) {
             
-            $form['tenants_container']['actions']['finish'] = array(
+            $form['tenants_container']['actions']['save'] = array(
               '#type' => 'submit',
-              '#value' => 'Finish',
+              '#value' => 'Save',
             );
             
           }
@@ -655,6 +655,73 @@ class ReviewTPCMonthlyReportForm extends FormBase {
         ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_add_confirm');
         
       $formState->setRedirectUrl($url);
+    }
+    else if($buttonSubmitted == 'Save') {
+      
+      $pagerConfig = MonthlyReportFormConfig::load($this->pagerConfigID);
+      
+      // Save any user operations that were checked on this page.
+      foreach($formState->getValues()['tenants_container'] as $tenantKey => $values) {
+        
+        $tenantID = explode('_', $tenantKey)[1];
+        
+        // If this isn't in place a config will be added for the actions.
+        if(!is_numeric($tenantID)) {
+          
+          continue;
+          
+        }
+        
+        $checkedActions = [];
+        $entryID = 0;
+        
+        foreach($values['local_actions'] as $action => $checked) {
+          
+          if($checked) {
+            
+            $checkedActions[] = $action;
+            
+          }
+          
+        }
+        
+        $reportEntries = \Drupal::entityQuery('tpc_monthly_report_entry')
+                          ->condition('field_tpc_re_report', 
+                            $pagerConfig->getMonthlyReportID())
+                          ->condition('field_tpc_re_tenant', $tenantID)
+                          ->execute();
+        
+        if(empty($reportEntries)) {
+          
+          $reportEntry = MonthlyReportEntry::create([
+            'id' => $entryID,
+            'field_tpc_re_report' => $pagerConfig->getMonthlyReportID(),
+            'field_tpc_re_actions' => $checkedActions,
+            'field_tpc_re_tenant' => $tenantID,
+          ]);
+          
+        }
+        else {
+          
+          $key = array_keys($reportEntries)[0];
+          $reportEntry = MonthlyReportEntry::load($reportEntries[$key]);
+          $reportEntry->set('field_tpc_re_actions', $checkedActions);
+          
+        }
+        
+        $reportEntry->save();
+        
+      }
+      
+      // Clean up the config object to make sure it doesn't just
+      // occupy space in the database
+      $pagerConfig->delete();
+      
+      $url = \Drupal\Core\Url
+        ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_review_save');
+        
+      $formState->setRedirectUrl($url);
+      
     }
     
   }

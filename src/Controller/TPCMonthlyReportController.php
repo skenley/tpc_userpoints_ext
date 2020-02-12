@@ -25,4 +25,13 @@ class TPCMonthlyReportController extends ControllerBase {
     
   }
   
+  public function confirmPageSaved() {
+    
+    return [
+      '#theme' => 'tpc_monthly_report_confirm_page',
+      '#message' => 'Your changes have been successfully saved.',
+    ];
+    
+  }
+  
 }

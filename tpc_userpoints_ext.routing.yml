@@ -35,14 +35,21 @@ tpc_userpoints_ext.tpc_monthly_report_add_confirm:
     _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCMonthlyReportController::confirmPageNew'
     _title: 'Successful Submission'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'tpc monthly report submit'
 tpc_userpoints_ext.tpc_monthly_report_review_approve:
   path: '/tpc_monthly_report/approved'
   defaults:
     _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCMonthlyReportController::confirmPageApproved'
     _title: 'Successful Submission'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'tpc monthly report submit'
+tpc_userpoints_ext.tpc_monthly_report_review_save:
+  path: '/tpc_monthly_report/saved'
+  defaults:
+    _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCMonthlyReportController::confirmPageSaved'
+    _title: 'Successful Submission'
+  requirements:
+    _permission: 'tpc monthly report submit'
 tpc_userpoints_ext.tpc_monthly_report_review:
   path: '/tpc_monthly_report/review'
   defaults:
