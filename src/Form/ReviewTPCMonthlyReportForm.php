@@ -557,9 +557,16 @@ class ReviewTPCMonthlyReportForm extends FormBase {
         $tmpEntry = MonthlyReportEntry::load($tmpEntryKey);
         $userID = $tmpEntry->get('field_tpc_re_tenant')
           ->getValue()[0]['target_id'];
-        $checkedActions = array_values($tmpEntry->get('field_tpc_re_actions')
-          ->getValue()[0]);
+        $checkedActionsRaw = $tmpEntry->get('field_tpc_re_actions')
+                              ->getValue();
+        $checkedActions = [];
         $tenant = User::load($userID);
+        
+        foreach($checkedActionsRaw as $key => $value) {
+          
+          $checkedActions[] = array_values($value)[0];
+          
+        }
         
         // Execute the transactions for this user.
         foreach($checkedActions as $checkedAction) {
@@ -572,6 +579,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
             $tenant, 
             strval($toconf->getDefaultPointValue()));
           $newTran->execute();
+          usleep(100000);
           
         }
         
