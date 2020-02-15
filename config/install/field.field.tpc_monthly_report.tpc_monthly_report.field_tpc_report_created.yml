@@ -7,7 +7,7 @@ id: tpc_monthly_report.tpc_monthly_report.field_tpc_report_created
 field_name: field_tpc_report_created
 entity_type: tpc_monthly_report
 bundle: tpc_monthly_report
-label: 'Changed'
+label: 'Created'
 description: 'The timestamp for when the report was created.'
 required: false
 translatable: false
