@@ -189,7 +189,7 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
     
     $form['actions_container']['heading'] = array(
       '#type' => 'label',
-      '#title' => 'Apply to all',
+      '#title' => 'Apply to page',
     );
     
     $form['tenants_container'] = array(
