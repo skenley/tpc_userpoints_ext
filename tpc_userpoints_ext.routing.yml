@@ -56,11 +56,11 @@ tpc_userpoints_ext.tpc_monthly_report_review:
     _form: '\Drupal\tpc_userpoints_ext\Form\ReviewTPCMonthlyReportForm'
     _title: 'Review Report'
   requirements:
-    _permission: 'tpc monthly report approve'
+    _permission: 'tpc monthly report submit'
 tpc_userpoints_ext.quiz_dashboard:
   path: '/quiz_dashboard'
   defaults:
     _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCQuizDashboardController::dashboardContent'
     _title: 'Quiz Dashboard'
   requirements:
-    _permission: 'use shortcuts'
+    _permission: 'take questionnaire quiz'

@@ -40,6 +40,10 @@ class AddTPCMonthlyReportForm extends FormBase {
     
     //$form['#attached']['library'][] = 'tpc_userpoints_ext/tpc-monthly-report-actions';
     
+    $form['instructions'] = array(
+      '#theme' => 'tpc_monthly_report_instructions',
+    );
+    
     $form['report_date'] = array(
       '#type' => 'date',
       '#title' => 'Date of Report',

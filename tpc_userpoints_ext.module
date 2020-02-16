@@ -59,6 +59,10 @@ function tpc_userpoints_ext_theme() {
       ],
       'template' => 'tpc-quiz-list-block',
     ],
+    'tpc_monthly_report_instructions' => [
+      'variables' => [],
+      'template' => 'tpc-monthly-report-instructions',
+    ],
   ];
   
 }
