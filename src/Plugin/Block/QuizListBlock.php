@@ -2,8 +2,11 @@
 
 namespace Drupal\tpc_userpoints_ext\Plugin\Block;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
+use Drupal\questionnaire\Access\QuizAccessCheck;
 use Drupal\user\Entity\User;
 
 /**
@@ -30,6 +33,7 @@ class QuizListBlock extends BlockBase {
     $quizzes = Node::loadMultiple($quizIDs);
     $quizListArray = [];
     $user = User::load(\Drupal::currentUser()->id());
+    $account = \Drupal::currentUser()->getAccount();
     $passedQuizzesRaw = 
       $user->get('field_q_user_passed_quizzes')->getValue()[0];
     $passedQuizzes = [];
@@ -42,7 +46,10 @@ class QuizListBlock extends BlockBase {
     
     foreach($quizzes as $quiz) {
       
-      if(!in_array($quiz->id(), $passedQuizzes)) {
+      $accessCheck = new QuizAccessCheck();
+      
+      if(!in_array($quiz->id(), $passedQuizzes) && 
+        $accessCheck->access($account, $quiz) != AccessResult::forbidden()) {
       
         $i = count($quizListArray);
         
