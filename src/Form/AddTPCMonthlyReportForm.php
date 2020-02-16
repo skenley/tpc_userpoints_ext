@@ -44,10 +44,16 @@ class AddTPCMonthlyReportForm extends FormBase {
       '#theme' => 'tpc_monthly_report_instructions',
     );
     
+    $dateYearStart = intval(date('Y')) - 2;
+    $dateYearEnd = intval(date('Y')) + 2;
+    $dateYearFormat = $dateYearStart . ':' . $dateYearEnd;
+    
     $form['report_date'] = array(
-      '#type' => 'date',
+      '#type' => 'datelist',
       '#title' => 'Date of Report',
       '#required' => TRUE,
+      '#date_part_order' => ['month', 'year'],
+      '#date_year_range' => $dateYearFormat,
     );
     
     $form['property'] = array(
@@ -115,11 +121,14 @@ class AddTPCMonthlyReportForm extends FormBase {
   
   public function submitForm(array &$form, FormStateInterface $formState) {
     
+    $drupalDateTime = $formState->getValues()['report_date'];
+    $date = $drupalDateTime->format('Y-m-d');
+    
     $url = \Drupal\Core\Url
       ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_add_tenants');
     $url->setRouteParameters([
       'tid' => $formState->getValues()['property'],
-      'date' => $formState->getValues()['report_date'],
+      'date' => $date,
     ]);
         
     $formState->setRedirectUrl($url);
