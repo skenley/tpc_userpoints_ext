@@ -646,7 +646,7 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
       // available to approve
       $adminIDs = \Drupal::entityQuery('user')
         ->condition('status', 1)
-        ->condition('roles', 'administrator')
+        ->condition('roles', 'site_manager')
         ->execute();
       $tmpUrl = \Drupal\Core\Url
         ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_review')
