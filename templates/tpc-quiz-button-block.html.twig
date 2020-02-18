@@ -1,0 +1,14 @@
+{% if quizButton == 'TRUE' %}
+  {% set quizMessage, quizButtonText = 'You have quizzes to take!', 'Take Quizzes' %}
+{% else %}
+  {% set quizMessage, quizButtonText = "You don't have any quizzes to take.", "View Quiz History" %}
+{% endif %}
+
+<div class="quiz-button-block">
+  <div class="quiz-message">
+    <p>{{ quizMessage }}</p>
+  </div>
+  <div class="quiz-button">
+    <a class="button" href="/quiz_dashboard">{{ quizButtonText }}</a>
+  </div>
+</div>

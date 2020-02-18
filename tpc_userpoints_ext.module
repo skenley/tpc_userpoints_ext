@@ -63,6 +63,12 @@ function tpc_userpoints_ext_theme() {
       'variables' => [],
       'template' => 'tpc-monthly-report-instructions',
     ],
+    'tpc_quiz_button' => [
+      'variables' => [
+        'quizButton' => NULL,
+      ],
+      'template' => 'tpc-quiz-button-block',
+    ],
   ];
   
 }

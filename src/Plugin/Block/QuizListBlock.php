@@ -29,18 +29,19 @@ class QuizListBlock extends BlockBase {
     
     $quizIDs = \Drupal::entityQuery('node')
               ->condition('type','q_quiz')
+              ->condition('status', 1)
               ->execute();
     $quizzes = Node::loadMultiple($quizIDs);
     $quizListArray = [];
     $user = User::load(\Drupal::currentUser()->id());
     $account = \Drupal::currentUser()->getAccount();
     $passedQuizzesRaw = 
-      $user->get('field_q_user_passed_quizzes')->getValue()[0];
+      $user->get('field_q_user_passed_quizzes')->getValue();
     $passedQuizzes = [];
     
     foreach($passedQuizzesRaw as $key => $value) {
       
-      $passedQuizzes[] = $value;
+      $passedQuizzes[] = $value['target_id'];
       
     }
     
