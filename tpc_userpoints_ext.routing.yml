@@ -47,7 +47,7 @@ tpc_userpoints_ext.tpc_monthly_report_review_save:
   path: '/tpc_monthly_report/saved'
   defaults:
     _controller: '\Drupal\tpc_userpoints_ext\Controller\TPCMonthlyReportController::confirmPageSaved'
-    _title: 'Successful Submission'
+    _title: 'Form Saved'
   requirements:
     _permission: 'tpc monthly report submit'
 tpc_userpoints_ext.tpc_monthly_report_review:
