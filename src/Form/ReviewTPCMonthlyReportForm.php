@@ -304,7 +304,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
             );
             $form['tenants_container']['actions']['save'] = array(
               '#type' => 'submit',
-              '#value' => 'Save',
+              '#value' => 'Save/Next Page',
             );
             
           }
