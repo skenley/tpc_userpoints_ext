@@ -56,18 +56,6 @@ class AddTPCMonthlyReportForm extends FormBase {
       '#date_year_range' => $dateYearFormat,
     );
     
-    $form['property'] = array(
-      '#type' => 'entity_autocomplete',
-      '#title' => 'Property',
-      '#description' => 'The community this report is for.',
-      '#target_type' => 'taxonomy_term',
-      '#selection_handler' => 'default',
-      '#selection_settings' => [
-        'target_bundles' => ['properties'],
-      ],
-      '#required' => TRUE,
-    );
-    
     /*
     $form['tenants_container'] = array(
       '#type' => 'container',
@@ -127,7 +115,9 @@ class AddTPCMonthlyReportForm extends FormBase {
     $url = \Drupal\Core\Url
       ::fromRoute('tpc_userpoints_ext.tpc_monthly_report_add_tenants');
     $url->setRouteParameters([
-      'tid' => $formState->getValues()['property'],
+      'tid' => User::load(\Drupal::currentUser()->id())
+                ->get('field_user_property')
+                ->getValue()[0]['target_id'],
       'date' => $date,
     ]);
         
