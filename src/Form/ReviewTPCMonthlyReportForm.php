@@ -288,7 +288,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
           
           $form['tenants_container']['actions']['next'] = array(
             '#type' => 'submit',
-            '#value' => 'Next',
+            '#value' => 'Save/Next Page',
           );
           
         }
@@ -304,7 +304,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
             );
             $form['tenants_container']['actions']['save'] = array(
               '#type' => 'submit',
-              '#value' => 'Save/Next Page',
+              '#value' => 'Save',
             );
             
           }
@@ -348,7 +348,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
     $this->pagerConfigID = $formConfigID;
     $this->pagerConfigID = hash('sha256', $this->pagerConfigID);
     
-    if($buttonSubmitted == 'Next') {
+    if($buttonSubmitted == 'Save/Next Page') {
       
       $pagerConfig = MonthlyReportFormConfig::load($this->pagerConfigID);
       
