@@ -53,6 +53,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
     FormStateInterface $formState = NULL) {
     
     $reportID = $_GET['report'];
+    //ksm(User::load(\Drupal::currentUser()->id())->get('field_userpoints_default_points')->getValue());
     
     // Make sure the report exists first before loading.
     if(!empty($reportID)) {
@@ -561,6 +562,10 @@ class ReviewTPCMonthlyReportForm extends FormBase {
                               ->getValue();
         $checkedActions = [];
         $tenant = User::load($userID);
+        $correctionNeeded = FALSE;
+        $originalBal = intval($tenant->get('field_userpoints_default_points')
+            ->getValue()[0]['value']);
+        
         
         foreach($checkedActionsRaw as $key => $value) {
           
@@ -572,6 +577,8 @@ class ReviewTPCMonthlyReportForm extends FormBase {
         foreach($checkedActions as $checkedAction) {
         
           $toconf = TOConfig::load($checkedAction);
+          $newBal = $originalBal + $toconf->getDefaultPointValue();
+          ksm($newBal);
           
           $newTran = new UserPointsTransactionWrapper(
             'userpoints_default_points', 
@@ -579,7 +586,23 @@ class ReviewTPCMonthlyReportForm extends FormBase {
             $tenant, 
             strval($toconf->getDefaultPointValue()));
           $newTran->execute();
-          usleep(100000);
+          
+          if($newTran->getBalance() != $newBal) {
+            
+            $newTran->setBalance($newBal);
+            $correctionNeeded = TRUE;
+            
+          }
+          
+          $originalBal += $toconf->getDefaultPointValue();
+          
+        }
+        
+        if($correctionNeeded) {
+          
+          ksm($originalBal);
+          $tenant->set('field_userpoints_default_points', $originalBal);
+          $tenant->save();
           
         }
         

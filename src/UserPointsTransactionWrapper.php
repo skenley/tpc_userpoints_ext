@@ -71,4 +71,20 @@ class UserPointsTransactionWrapper {
     
   }
   
+  public function getBalance() {
+    
+    return intval($this->transaction
+      ->get('field_userpoints_default_balance')
+      ->getValue()[0]['value']);
+    
+  }
+  
+  public function setBalance($newBal) {
+    
+    $this->transaction->set('field_userpoints_default_balance', 
+      strval($newBal));
+    $this->transaction->save();
+    
+  }
+  
 }

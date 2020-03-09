@@ -8,6 +8,7 @@ use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\transaction\Entity\Transaction;
 use Drupal\user\Entity\User;
 use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 use Drupal\transaction\Entity\TransactionOperation;
@@ -38,6 +39,7 @@ class AddTPCMonthlyReportForm extends FormBase {
   public function buildForm(array $form, 
     FormStateInterface $formState = NULL) {
     
+    ksm(User::load(24)->get('field_userpoints_default_points')->getValue()[0]['value']);
     //$form['#attached']['library'][] = 'tpc_userpoints_ext/tpc-monthly-report-actions';
     
     $form['instructions'] = array(
