@@ -9,6 +9,8 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\transaction\Entity\TransactionOperation;
 use Drupal\transaction\Entity\Transaction;
+use Drupal\commerce_product\Entity\ProductVariation;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_theme().
@@ -192,6 +194,14 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
   else if ($form_id == 'node_q_quiz_delete_form') {
     
     $form['actions']['submit']['#submit'][] = 'quizDeleteSub';
+    
+  }
+  else if(strpos($form_id, 
+    'commerce_order_item_add_to_cart_form_commerce_product') !== false) {
+    
+    $validations = $form['#validate'];
+    array_unshift($validations, 'assureSufficientFunds');
+    $form['#validate'] = $validations;
     
   }
   
@@ -459,5 +469,48 @@ function tpc_userpoints_ext_mail($key, &$message, $params) {
     $message['body'][] = $body;
     
   }
+  
+}
+
+function assureSufficientFunds($form, $formState) {
+  
+  // Calculate purchase price of item to be added to cart
+  $toPurchaseID = $formState->getValues()['purchased_entity'][0]['variation'];
+  $purchasePrice = ProductVariation::load($toPurchaseID)
+    ->get('price')->getValue()[0]['number'];
+  $quantity = $formState->getValues()['quantity'][0]['value'];
+  $purchasePrice = intval($purchasePrice) * intval($quantity);
+  
+  // Calculate what is currently in the cart
+  $currentInCart = 0;
+  $allCarts = \Drupal::service('commerce_cart.cart_provider')
+    ->getCarts();
+    
+  foreach($allCarts as $cart) {
+  
+    $currentInCart += intval($cart
+      ->get('total_price')->getValue()[0]['number']);
+    
+  }
+  
+  // Total
+  $priceToValidate = $purchasePrice + $currentInCart;
+  
+  // Get user balance, and make sure what the user is wanting to buy is not
+  // worth more than the points in their balance
+  $userID = \Drupal::currentUser()->id();
+  $userBalance = intval(User::load($userID)
+    ->get('field_userpoints_default_points')->getValue()[0]['value']);
+  
+  if($priceToValidate > $userBalance) {
+    
+    drupal_set_message('You do not have enough points to add ' . 
+      'that to your cart.', 'error');
+    $formState->setErrorByName('quantity');
+    return FALSE;
+    
+  }
+  
+  return TRUE;
   
 }
