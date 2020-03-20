@@ -118,6 +118,8 @@ function tpc_userpoints_ext_form_alter(&$form, FormStateInterface $form_state, $
     // alter its value
     $form['field_userpoints_default_amount']['widget'][0]['value']
       ['#attributes']['readonly'] = 'readonly';
+      
+    $form['#attached']['library'][] = 'tpc_userpoints_ext/admin-points-add';
     
     // AJAX setup for when the operation is selected
     $form['operation']['widget']['#ajax'] = [
