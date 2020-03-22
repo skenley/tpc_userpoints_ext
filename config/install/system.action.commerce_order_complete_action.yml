@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - commerce_order
+  module:
+    - commerce_order
+id: commerce_order_complete_action
+label: 'Complete order'
+type: commerce_order
+plugin: commerce_order_complete_action
+configuration: {  }
