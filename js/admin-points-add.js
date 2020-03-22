@@ -11,7 +11,8 @@
           var selectedOp = $(this).val();
           console.log(selectedOp);
           
-          if(selectedOp === 'userpoints_default_admin') {
+          if(selectedOp === 'userpoints_default_admin' ||
+              selectedOp === 'userpoints_adjustment') {
             
             $('#edit-field-userpoints-default-amount-0-value')
               .removeAttr('readonly');
