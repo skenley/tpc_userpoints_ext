@@ -71,6 +71,21 @@ class UserPointsTransactionWrapper {
     
   }
   
+  /**
+   * Overloaded execution method that executes the transaction and edits 
+   * the transaction to be recorded as executed (and created) at a specific
+   * UNIX timestamp. This is needed as executing multiple transactions at
+   * once is problematic if timestamps are not incremented.
+   */
+  public function executeAtTime($timestamp) {
+    
+    $this->transaction->execute();
+    $this->transaction->set('created', $timestamp);
+    $this->transaction->set('executed', $timestamp);
+    $this->transaction->save();
+    
+  }
+  
   public function getBalance() {
     
     return intval($this->transaction

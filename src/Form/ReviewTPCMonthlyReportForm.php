@@ -565,6 +565,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
         $correctionNeeded = FALSE;
         $originalBal = intval($tenant->get('field_userpoints_default_points')
             ->getValue()[0]['value']);
+        $timestamp = time();
         
         
         foreach($checkedActionsRaw as $key => $value) {
@@ -578,14 +579,13 @@ class ReviewTPCMonthlyReportForm extends FormBase {
         
           $toconf = TOConfig::load($checkedAction);
           $newBal = $originalBal + $toconf->getDefaultPointValue();
-          ksm($newBal);
           
           $newTran = new UserPointsTransactionWrapper(
             'userpoints_default_points', 
             $checkedAction, 
             $tenant, 
             strval($toconf->getDefaultPointValue()));
-          $newTran->execute();
+          $newTran->executeAtTime(strval($timestamp));
           
           if($newTran->getBalance() != $newBal) {
             
@@ -595,12 +595,12 @@ class ReviewTPCMonthlyReportForm extends FormBase {
           }
           
           $originalBal += $toconf->getDefaultPointValue();
+          $timestamp++;
           
         }
         
         if($correctionNeeded) {
           
-          ksm($originalBal);
           $tenant->set('field_userpoints_default_points', $originalBal);
           $tenant->save();
           
