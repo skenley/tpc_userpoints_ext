@@ -139,8 +139,33 @@ class ReviewTPCMonthlyReportForm extends FormBase {
           
           // If the transaction operation is not apart of the list to be 
           // excluded, include it in the action list.
-          if($confID != 'userpoints_q_quiz_passed' 
-            && $confID != 'userpoints_commerce_transaction') {
+          $excludeList = [
+            'userpoints_q_quiz_passed',
+            'userpoints_commerce_transaction',
+            'userpoints_default_admin',
+            'userpoints_affordable_communities_100_occupancy',
+            'userpoints_collect_rent_on_time',
+            'userpoints_excellent_community_rating',
+            'userpoints_home_in_excellent_condition',
+            'userpoints_leaderboard_winner',
+            'userpoints_manager_of_the_month',
+            'userpoints_manager_of_the_year',
+            'userpoints_market_rate_communities_95_occupancy',
+            'userpoints_meet_annual_budget',
+            'userpoints_monthly_points_on_time',
+            'userpoints_most_resident_points_25_100_units',
+            'userpoints_most_resident_points_101_175_units',
+            'userpoints_no_insurance_claims',
+            'userpoints_resident_of_the_year_all_communities',
+            'userpoints_resident_of_the_year_community',
+            'userpoints_top_5_leaderboard',
+            'userpoints_top_20_leaderboard',
+            'userpoints_commerce_transaction',
+            'userpoints_q_quiz_passed',
+            'userpoints_adjustment',
+          ];
+          
+          if(!in_array($confID, $excludeList)) {
             
             $this->actions[] = [
               'id' => $conf->id(),
