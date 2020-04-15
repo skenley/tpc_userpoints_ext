@@ -64,3 +64,10 @@ tpc_userpoints_ext.quiz_dashboard:
     _title: 'Quiz Dashboard'
   requirements:
     _permission: 'take questionnaire quiz'
+tpc_userpoints_ext.userpoints_ytd:
+  path: '/points-leaderboard'
+  defaults:
+    _controller: 'Drupal\tpc_userpoints_ext\Controller\TPCPointsLeaderboardController::pointsLeaderboardContent'
+    _title: 'Leaderboard Top 20'
+  requirements:
+    _permission: 'access content'
