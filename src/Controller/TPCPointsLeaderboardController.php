@@ -30,6 +30,8 @@ class TPCPointsLeaderboardController extends ControllerBase {
     $select = $database->select('transaction', 't');
     // Join the userpoints default amount table so we can get the amount of each transaction.
     $select->join('transaction__field_userpoints_default_amount', 'ta', 't.id = ta.entity_id');
+    // Join the users field data table so we can get the target entity's status.
+    $select->join('users_field_data', 'u', 't.target_entity__target_id = u.uid');
     // Join the user roles table so we can get the target entity's role.
     $select->join('user__roles', 'ur', 't.target_entity__target_id = ur.entity_id');
     // Join the users property table so we can get the target entity's property.
@@ -47,6 +49,8 @@ class TPCPointsLeaderboardController extends ControllerBase {
     $select->addExpression('SUM(ta.field_userpoints_default_amount_value)', 'total');
     // Do not select transactions that haven't been executed.
     $select->isNotNull('t.executed');
+    // Only select transactions attached to active users.
+    $select->condition('u.status', 1, '=');
     // Only select transactions attached to users with the tenant role.
     $select->condition('ur.roles_target_id', 'tenant', '=');
     // Only select transactions that were created during the current year.
@@ -55,7 +59,8 @@ class TPCPointsLeaderboardController extends ControllerBase {
     $select->condition('t.operation', 'userpoints_default_admin', '<>');
     $select->condition('t.operation', 'userpoints_commerce_transaction', '<>');
     // Order the results by total points descending.
-    $select->orderBy('total', 'DESC');
+    $select->orderBy('total', 'DESC')
+      ->orderBy('u.uid', 'ASC');
     // Return the top 20 results.
     $select->range(0, 20);
     
