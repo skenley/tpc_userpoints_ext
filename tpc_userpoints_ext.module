@@ -11,6 +11,60 @@ use Drupal\transaction\Entity\TransactionOperation;
 use Drupal\transaction\Entity\Transaction;
 use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\user\Entity\User;
+use \DateTime;
+use Drupal\Database\Database;
+use Drupal\Core\Queue\QueueFactory;
+
+/**
+ * Implements hook_cron().
+ */
+function tpc_userpoints_ext_cron() {
+  // Get the transaction info needed to calculate ranking.
+  $firstDay = new DateTime('first day of january');
+  $firstDaySec = $firstDay->format('U');
+  $database = \Drupal::database();
+  $database->query("SET SESSION sql_mode = ''")->execute();
+  
+  // Select base table for query.
+  $select = $database->select('transaction', 't');
+  // Join the userpoints default amount table so we can get the amount of each transaction.
+  $select->join('transaction__field_userpoints_default_amount', 'ta', 't.id = ta.entity_id');
+  // Join the users field data table so we can get the target entity's status.
+  $select->join('users_field_data', 'u', 't.target_entity__target_id = u.uid');
+  // Join the user roles table so we can get the target entity's role.
+  $select->join('user__roles', 'ur', 't.target_entity__target_id = ur.entity_id');
+  // Select the user id.
+  $select->addField('ur', 'entity_id');
+  // Groupl results by the User ID.
+  $select->groupBy('t.target_entity__target_id');
+  // Get the sum of all the points earnded YTD for each user.
+  $select->addExpression('SUM(ta.field_userpoints_default_amount_value)', 'total');
+  // Do not select transactions that haven't been executed.
+  $select->isNotNull('t.executed');
+  // Only select transactions attached to active users.
+  $select->condition('u.status', 1, '=');
+  // Only select transactions attached to users with the tenant role.
+  $select->condition('ur.roles_target_id', 'tenant', '=');
+  // Only select transactions that were created during the current year.
+  $select->condition('t.created', $firstDaySec, '>=');
+  // Do not select transactions using the Admin, or Commerce operations.
+  $select->condition('t.operation', 'userpoints_default_admin', '<>');
+  $select->condition('t.operation', 'userpoints_commerce_transaction', '<>');
+  // Order the results by total points descending listing oldest members first in case of tie.
+  $select->orderBy('total', 'DESC')
+    ->orderBy('u.uid', 'ASC');
+  // Execute query.
+  $results = $select->execute()->fetchAll(\PDO::FETCH_ASSOC);
+  
+  // Get Queue
+  $queue = \Drupal::queue('tpc_userpoints_ext_queue');
+  
+  // Create queue items from query results.
+  foreach ($results as $key=>$result) {
+    $item = (object) ['uid' => $result['entity_id'], 'rank' => $key+1];
+    $queue->createItem($item);
+  }
+}
 
 /**
  * Implements hook_theme().
