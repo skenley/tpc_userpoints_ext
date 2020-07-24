@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
+use Drupal\tpc_userpoints_ext\TPCUnit;
 use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 use Drupal\tpc_userpoints_ext\Entity\MonthlyReport;
 use Drupal\tpc_userpoints_ext\Entity\MonthlyReportEntry;
@@ -49,7 +50,7 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
     
     if(empty($pagerConfig)) {
 
-      $this->pagerOffset = 5;
+      $this->pagerOffset = 20;
       $this->currentOffset = 0;
     
     }
@@ -73,7 +74,7 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
   
   public function buildForm(array $form, 
     FormStateInterface $formState = NULL) {
-
+      
     $reportsCount = \Drupal::database()
               ->select('tpc_monthly_report', 'tpcmr')
               ->fields('tpcmr', ['id'],)
@@ -114,19 +115,30 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
             
     foreach($tmpUsers as $userID => $tmpUser) {
       
-      $this->users[$userIndex] = [
-        'first_name' => $tmpUser->get('field_user_first_name')
-          ->getValue()[0]['value'],
-        'last_name' => $tmpUser->get('field_user_last_name')
-          ->getValue()[0]['value'],
-        'unit_num' => $tmpUser->get('field_user_property_unit_number')
-          ->getValue()[0]['value'],
-        'id' => $tmpUser->id(),
-        'actions' => [],
-      ];
-      $userIndex++;
+      $tmpUserRoles = $tmpUser->getRoles();
+      
+      // Don't add any managers or admins to list
+      if(!in_array('site_manager', $tmpUserRoles) && 
+        !in_array('administrator', $tmpUserRoles) &&
+        !in_array('property_manager', $tmpUserRoles)) {
+      
+        $this->users[$userIndex] = [
+          'first_name' => $tmpUser->get('field_user_first_name')
+            ->getValue()[0]['value'],
+          'last_name' => $tmpUser->get('field_user_last_name')
+            ->getValue()[0]['value'],
+          'unit_num' => $tmpUser->get('field_user_property_unit_number')
+            ->getValue()[0]['value'],
+          'id' => $tmpUser->id(),
+          'actions' => [],
+        ];
+        
+        $userIndex++;
+      }
       
     }
+    
+    uasort($this->users, array($this, 'unitNumCompare'));
     
     // Load the transaction operations that can be applied to each user
     $operationConfigs = TOConfig::loadMultiple();
@@ -422,6 +434,8 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
           'field_tpc_report_changed' => $createdTimestamp,
           'field_tpc_report_date' => date_format($date, 'U'),
           'field_tpc_report_approved' => 0,
+          'field_tpc_report_submitted' => 0,
+          'field_tpc_report_submitter' => \Drupal::currentUser()->id(),
         ]);
         $newMonthlyReport->save();
         
@@ -483,7 +497,7 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
           'id' => $this->pagerConfigID,
           'monthlyReportID' => $newMonthlyReport->id(),
           'currentOffset' => $this->currentOffset + $this->pagerOffset,
-          'pagerOffset' => 5,
+          'pagerOffset' => 20,
           'lastUpdated' => $createdTimestamp,
         ]);
         $pagerConfig->save();
@@ -618,6 +632,34 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
       
       $pagerConfig = MonthlyReportFormConfig::load($this->pagerConfigID);
       
+      if(!$pagerConfig) {
+        
+        $reportsCount = strval($reportsCount);
+        $createdTimestamp = time();
+        
+        $newMonthlyReport = MonthlyReport::create([
+          'id' => $reportsCount,
+          'field_tpc_report_title' => $this->title,
+          'field_tpc_report_property' => $this->property->id(),
+          'field_tpc_report_created' => $createdTimestamp,
+          'field_tpc_report_changed' => $createdTimestamp,
+          'field_tpc_report_date' => date_format($date, 'U'),
+          'field_tpc_report_approved' => 0,
+          'field_tpc_report_submitted' => 0,
+          'field_tpc_report_submitter' => \Drupal::currentUser()->id(),
+        ]);
+        $newMonthlyReport->save();
+        
+        $pagerConfig = MonthlyReportFormConfig::create([
+          'id' => $this->pagerConfigID,
+          'monthlyReportID' => $newMonthlyReport->id(),
+          'currentOffset' => $this->currentOffset + $this->pagerOffset,
+          'pagerOffset' => 20,
+          'lastUpdated' => $createdTimestamp,
+        ]);
+        
+      }
+      
       // Save any user operations that were checked on this page.
       foreach($formState->getValues()['tenants_container'] as $tenantKey => $values) {
         
@@ -670,6 +712,10 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
         $reportEntry->save();
         
       }
+      
+      $monthlyReport = MonthlyReport::load($pagerConfig->getMonthlyReportID());
+      $monthlyReport->set('field_tpc_report_submitted', 1);
+      $monthlyReport->save();
       
       // Send email to all admins notifying them that a new report is
       // available to approve
@@ -774,6 +820,21 @@ class AddTPCMonthlyReportFormTenants extends FormBase {
       $formState->setRedirectUrl($url);
       
     }
+    
+  }
+  
+  public function unitNumCompare($userOne, $userTwo) {
+    
+    $unitNumOne = TPCUnit::unitNumberToDecimal($userOne['unit_num']);
+    $unitNumTwo = TPCUnit::unitNumberToDecimal($userTwo['unit_num']);
+    
+    if($unitNumOne == $unitNumTwo) {
+      
+      return 0;
+      
+    }
+    
+    return ($unitNumOne < $unitNumTwo) ? -1 : 1;
     
   }
   

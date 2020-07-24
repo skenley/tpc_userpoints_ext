@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.tpc_monthly_report.field_tpc_report_submitted
+id: tpc_monthly_report.tpc_monthly_report.field_tpc_report_submitted
+field_name: field_tpc_report_submitted
+entity_type: tpc_monthly_report
+bundle: tpc_monthly_report
+label: Submitted
+description: 'Value is checked if report has been submitted.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'True'
+  off_label: 'False'
+field_type: boolean

@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
+use Drupal\tpc_userpoints_ext\TPCUnit;
 use Drupal\tpc_userpoints_ext\Entity\TOConfig;
 use Drupal\tpc_userpoints_ext\Entity\MonthlyReport;
 use Drupal\tpc_userpoints_ext\Entity\MonthlyReportEntry;
@@ -94,7 +95,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
         
         if(empty($pagerConfig)) {
 
-          $this->pagerOffset = 5;
+          $this->pagerOffset = 20;
           $this->currentOffset = 0;
         
         }
@@ -117,19 +118,30 @@ class ReviewTPCMonthlyReportForm extends FormBase {
                 
         foreach($tmpUsers as $userID => $tmpUser) {
           
-          $this->users[$userIndex] = [
-            'first_name' => $tmpUser->get('field_user_first_name')
-              ->getValue()[0]['value'],
-            'last_name' => $tmpUser->get('field_user_last_name')
-              ->getValue()[0]['value'],
-            'unit_num' => $tmpUser->get('field_user_property_unit_number')
-              ->getValue()[0]['value'],
-            'id' => $tmpUser->id(),
-            'actions' => [],
-          ];
-          $userIndex++;
+          $tmpUserRoles = $tmpUser->getRoles();
+          
+          // Don't add any managers or admins to list
+          if(!in_array('site_manager', $tmpUserRoles) && 
+            !in_array('administrator', $tmpUserRoles) &&
+            !in_array('property_manager', $tmpUserRoles)) {
+          
+            $this->users[$userIndex] = [
+              'first_name' => $tmpUser->get('field_user_first_name')
+                ->getValue()[0]['value'],
+              'last_name' => $tmpUser->get('field_user_last_name')
+                ->getValue()[0]['value'],
+              'unit_num' => $tmpUser->get('field_user_property_unit_number')
+                ->getValue()[0]['value'],
+              'id' => $tmpUser->id(),
+              'actions' => [],
+            ];
+            
+            $userIndex++;
+          }
           
         }
+        
+        uasort($this->users, array($this, 'unitNumCompare'));
         
         // Load the transaction operations that can be applied to each user
         $operationConfigs = TOConfig::loadMultiple();
@@ -427,7 +439,7 @@ class ReviewTPCMonthlyReportForm extends FormBase {
           'id' => $this->pagerConfigID,
           'monthlyReportID' => $report->id(),
           'currentOffset' => $this->currentOffset + $this->pagerOffset,
-          'pagerOffset' => 5,
+          'pagerOffset' => 20,
           'lastUpdated' => $createdTimestamp,
         ]);
         $pagerConfig->save();
@@ -635,7 +647,12 @@ class ReviewTPCMonthlyReportForm extends FormBase {
       
       // Clean up the config object to make sure it doesn't just
       // occupy space in the database
-      $pagerConfig->delete();
+      if($pagerConfig) {
+        
+        $pagerConfig->delete();
+        
+      }
+      
       $report->set('field_tpc_report_approved', 1);
       $report->set('field_tpc_report_changed', date());
       $report->save();
@@ -649,6 +666,18 @@ class ReviewTPCMonthlyReportForm extends FormBase {
     else if($buttonSubmitted == 'Submit For Approval') {
       
       $pagerConfig = MonthlyReportFormConfig::load($this->pagerConfigID);
+      
+      if(!$pagerConfig) {
+        
+        $pagerConfig = MonthlyReportFormConfig::create([
+          'id' => $this->pagerConfigID,
+          'monthlyReportID' => $newMonthlyReport->id(),
+          'currentOffset' => $this->currentOffset + $this->pagerOffset,
+          'pagerOffset' => 20,
+          'lastUpdated' => $createdTimestamp,
+        ]);
+        
+      }
       
       // Save any user operations that were checked on this page.
       foreach($formState->getValues()['tenants_container'] as $tenantKey => $values) {
@@ -788,6 +817,21 @@ class ReviewTPCMonthlyReportForm extends FormBase {
       '#type' => 'label',
       '#title' => 'A valid report ID is required to review a report.',
     );
+    
+  }
+  
+  public function unitNumCompare($userOne, $userTwo) {
+    
+    $unitNumOne = TPCUnit::unitNumberToDecimal($userOne['unit_num']);
+    $unitNumTwo = TPCUnit::unitNumberToDecimal($userTwo['unit_num']);
+    
+    if($unitNumOne == $unitNumTwo) {
+      
+      return 0;
+      
+    }
+    
+    return ($unitNumOne < $unitNumTwo) ? -1 : 1;
     
   }
   

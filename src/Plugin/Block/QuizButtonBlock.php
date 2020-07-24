@@ -3,6 +3,7 @@
 namespace Drupal\tpc_userpoints_ext\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 
@@ -56,4 +57,11 @@ class QuizButtonBlock extends BlockBase {
       '#quizButton' => 'FALSE',
     ];
   }
+  
+  public function getCacheTags() {
+    
+    return Cache::mergeTags(parent::getCacheTags(), ['tpc_quiz_button_block']);
+    
+  }
+  
 }
